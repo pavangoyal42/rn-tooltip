@@ -1,13 +1,14 @@
 {
-  "name": "rn-tooltip",
-  "version": "3.0.1",
+  "name": "rn-tooltip-v1",
+  "version": "1.0.0",
+  "description": "Original project: https://github.com/AndreiCalazans/rn-tooltip I made this package because I want to use it with rn version 0.69. This needs some changes, ViewPropTypes will be removed from React Native.",
   "main": "src/Tooltip.js",
-  "homepage": "https://github.com/AndreiCalazans/rn-tooltip#readme",
+  "homepage": "https://github.com/pavangoyal42/rn-tooltip",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/AndreiCalazans/rn-tooltip"
+    "url": "https://github.com/pavangoyal42/rn-tooltip"
   },
-  "author": "AndreiCalazans <andreixoc@hotmail.com>",
+  "author": "Pavan Goyal <pavan.goyal@dream11.com>",
   "license": "MIT",
   "scripts": {
     "check:commit": "yarn flow && npm run test && lint-staged",
