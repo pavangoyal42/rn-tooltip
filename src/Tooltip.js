@@ -1,70 +1,38 @@
 //  @flow
 
-import * as React from 'react';
-import {
-  TouchableOpacity,
-  Modal,
-  View,
-  ViewPropTypes as RNViewPropTypes,
-  I18nManager,
-} from 'react-native';
-import PropTypes from 'prop-types';
+import * as React from 'react'
+import {TouchableOpacity, Modal, View, I18nManager} from 'react-native'
+import {ViewPropTypes as RNViewPropTypes} from 'deprecated-react-native-prop-types'
+import PropTypes from 'prop-types'
 
-import Triangle from './Triangle';
-import { ScreenWidth, ScreenHeight, isIOS } from './helpers';
-import getTooltipCoordinate from './getTooltipCoordinate';
+import Triangle from './Triangle'
+import {ScreenWidth, ScreenHeight, isIOS} from './helpers'
+import getTooltipCoordinate from './getTooltipCoordinate'
 
-const ViewPropTypes = RNViewPropTypes || View.propTypes;
-
-type State = {
-  isVisible: boolean,
-  yOffset: number,
-  xOffset: number,
-  elementWidth: number,
-  elementHeight: number,
-};
-
-type Props = {
-  withPointer: boolean,
-  popover: React.Element,
-  height: number | string,
-  width: number | string,
-  containerStyle: any,
-  pointerColor: string,
-  pointerStyle: {},
-  onClose: () => void,
-  onOpen: () => void,
-  withOverlay: boolean,
-  overlayColor: string,
-  backgroundColor: string,
-  highlightColor: string,
-  toggleWrapperProps: {},
-  actionType: 'press' | 'longPress' | 'none',
-};
-
-class Tooltip extends React.Component<Props, State> {
+const ViewPropTypes = RNViewPropTypes || View.propTypes
+class Tooltip extends React.Component {
   state = {
     isVisible: false,
     yOffset: 0,
     xOffset: 0,
     elementWidth: 0,
     elementHeight: 0,
-  };
+  }
 
-  renderedElement;
-  timeout;
+  renderedElement
+  timeout
 
   toggleTooltip = () => {
-    const { onClose } = this.props;
-    this.getElementPosition();
-    this.setState(prevState => {
+    const {onClose} = this.props
+    this.getElementPosition()
+    this.setState((prevState) => {
       if (prevState.isVisible && !isIOS) {
-        onClose && onClose();
+        onClose && onClose()
       }
 
-      return { isVisible: !prevState.isVisible };
-    });
-  };
+      return {isVisible: !prevState.isVisible}
+    })
+  }
 
   wrapWithAction = (actionType, children) => {
     switch (actionType) {
@@ -73,37 +41,35 @@ class Tooltip extends React.Component<Props, State> {
           <TouchableOpacity
             onPress={this.toggleTooltip}
             activeOpacity={1}
-            {...this.props.toggleWrapperProps}
-          >
+            {...this.props.toggleWrapperProps}>
             {children}
           </TouchableOpacity>
-        );
+        )
       case 'longPress':
         return (
           <TouchableOpacity
             onLongPress={this.toggleTooltip}
             activeOpacity={1}
-            {...this.props.toggleWrapperProps}
-          >
+            {...this.props.toggleWrapperProps}>
             {children}
           </TouchableOpacity>
-        );
+        )
       default:
-        return children;
+        return children
     }
-  };
+  }
 
   getTooltipStyle = () => {
-    const { yOffset, xOffset, elementHeight, elementWidth } = this.state;
+    const {yOffset, xOffset, elementHeight, elementWidth} = this.state
     const {
       height,
       backgroundColor,
       width,
       withPointer,
       containerStyle,
-    } = this.props;
+    } = this.props
 
-    const { x, y } = getTooltipCoordinate(
+    const {x, y} = getTooltipCoordinate(
       xOffset,
       yOffset,
       elementWidth,
@@ -112,7 +78,7 @@ class Tooltip extends React.Component<Props, State> {
       ScreenHeight,
       width,
       withPointer,
-    );
+    )
 
     const tooltipStyle = {
       position: 'absolute',
@@ -129,23 +95,23 @@ class Tooltip extends React.Component<Props, State> {
       borderRadius: 10,
       padding: 10,
       ...containerStyle,
-    };
-
-    const pastMiddleLine = yOffset > y;
-    if (typeof height !== 'number' && pastMiddleLine) {
-      tooltipStyle.bottom = ScreenHeight - y;
-    } else if (typeof height === 'number' && pastMiddleLine) {
-      tooltipStyle.top = y - height;
-    } else {
-      tooltipStyle.top = y;
     }
 
-    return { tooltipStyle, pastMiddleLine };
-  };
+    const pastMiddleLine = yOffset > y
+    if (typeof height !== 'number' && pastMiddleLine) {
+      tooltipStyle.bottom = ScreenHeight - y
+    } else if (typeof height === 'number' && pastMiddleLine) {
+      tooltipStyle.top = y - height
+    } else {
+      tooltipStyle.top = y
+    }
 
-  renderPointer = pastMiddleLine => {
-    const { yOffset, xOffset, elementHeight, elementWidth } = this.state;
-    const { backgroundColor, pointerColor, pointerStyle } = this.props;
+    return {tooltipStyle, pastMiddleLine}
+  }
+
+  renderPointer = (pastMiddleLine) => {
+    const {yOffset, xOffset, elementHeight, elementWidth} = this.state
+    const {backgroundColor, pointerColor, pointerStyle} = this.props
 
     return (
       <View
@@ -154,8 +120,7 @@ class Tooltip extends React.Component<Props, State> {
           top: pastMiddleLine ? yOffset - 13 : yOffset + elementHeight - 2,
           left: I18nManager.isRTL ? null : xOffset + elementWidth / 2 - 7.5,
           right: I18nManager.isRTL ? xOffset + elementWidth / 2 - 7.5 : null,
-        }}
-      >
+        }}>
         <Triangle
           style={{
             borderBottomColor: pointerColor || backgroundColor,
@@ -164,16 +129,16 @@ class Tooltip extends React.Component<Props, State> {
           isDown={pastMiddleLine}
         />
       </View>
-    );
-  };
-  renderContent = withTooltip => {
-    const { popover, withPointer, highlightColor, actionType } = this.props;
+    )
+  }
+  renderContent = (withTooltip) => {
+    const {popover, withPointer, highlightColor, actionType} = this.props
 
     if (!withTooltip)
-      return this.wrapWithAction(actionType, this.props.children);
+      return this.wrapWithAction(actionType, this.props.children)
 
-    const { yOffset, xOffset, elementWidth, elementHeight } = this.state;
-    const { pastMiddleLine, tooltipStyle } = this.getTooltipStyle();
+    const {yOffset, xOffset, elementWidth, elementHeight} = this.state
+    const {pastMiddleLine, tooltipStyle} = this.getTooltipStyle()
     return (
       <React.Fragment>
         <View
@@ -186,23 +151,22 @@ class Tooltip extends React.Component<Props, State> {
             overflow: 'visible',
             width: elementWidth,
             height: elementHeight,
-          }}
-        >
+          }}>
           {this.props.children}
         </View>
         {withPointer && this.renderPointer(Boolean(pastMiddleLine))}
         <View style={tooltipStyle}>{popover}</View>
       </React.Fragment>
-    );
-  };
+    )
+  }
 
   componentDidMount() {
     // wait to compute onLayout values.
-    this.timeout = setTimeout(this.getElementPosition, 500);
+    this.timeout = setTimeout(this.getElementPosition, 500)
   }
 
   componentWillUnmount() {
-    clearTimeout(this.timeout);
+    clearTimeout(this.timeout)
   }
 
   getElementPosition = () => {
@@ -214,17 +178,17 @@ class Tooltip extends React.Component<Props, State> {
             yOffset: pageOffsetY,
             elementWidth: width,
             elementHeight: height,
-          });
+          })
         },
-      );
-  };
+      )
+  }
 
   render() {
-    const { isVisible } = this.state;
-    const { onClose, withOverlay, onOpen, overlayColor } = this.props;
+    const {isVisible} = this.state
+    const {onClose, withOverlay, onOpen, overlayColor} = this.props
 
     return (
-      <View collapsable={false} ref={e => (this.renderedElement = e)}>
+      <View collapsable={false} ref={(e) => (this.renderedElement = e)}>
         {this.renderContent(false)}
         <Modal
           animationType="fade"
@@ -232,18 +196,16 @@ class Tooltip extends React.Component<Props, State> {
           transparent
           onDismiss={onClose}
           onShow={onOpen}
-          onRequestClose={onClose}
-        >
+          onRequestClose={onClose}>
           <TouchableOpacity
             style={styles.container(withOverlay, overlayColor)}
             onPress={this.toggleTooltip}
-            activeOpacity={1}
-          >
+            activeOpacity={1}>
             {this.renderContent(true)}
           </TouchableOpacity>
         </Modal>
       </View>
-    );
+    )
   }
 }
 
@@ -264,7 +226,7 @@ Tooltip.propTypes = {
   backgroundColor: PropTypes.string,
   highlightColor: PropTypes.string,
   actionType: PropTypes.oneOf(['press', 'longPress', 'none']),
-};
+}
 
 Tooltip.defaultProps = {
   toggleWrapperProps: {},
@@ -279,7 +241,7 @@ Tooltip.defaultProps = {
   backgroundColor: '#617080',
   onClose: () => {},
   onOpen: () => {},
-};
+}
 
 const styles = {
   container: (withOverlay, overlayColor) => ({
@@ -290,6 +252,6 @@ const styles = {
       : 'transparent',
     flex: 1,
   }),
-};
+}
 
-export default Tooltip;
+export default Tooltip

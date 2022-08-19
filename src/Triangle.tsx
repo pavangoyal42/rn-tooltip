@@ -1,20 +1,21 @@
 //  @flow
 
-import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import React from 'react'
+
+import {View, StyleSheet} from 'react-native'
 
 type Props = {
-  style: any,
-  isDown: boolean,
-};
+  style: any
+  isDown: boolean
+}
 
-const Triangle = ({ style, isDown }: Props) => (
+const Triangle = ({style, isDown}: Props) => (
   <View style={[styles.triangle, style, isDown ? styles.down : {}]} />
-);
+)
 
 const styles = StyleSheet.create({
   down: {
-    transform: [{ rotate: '180deg' }],
+    transform: [{rotate: '180deg'}],
   },
   triangle: {
     width: 0,
@@ -28,6 +29,6 @@ const styles = StyleSheet.create({
     borderRightColor: 'transparent',
     borderBottomColor: 'white',
   },
-});
+})
 
-export default Triangle;
+export default Triangle
